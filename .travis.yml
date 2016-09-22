@@ -7,23 +7,24 @@ install:
 - go get github.com/laher/goxc
 script:
 - go test -v
-deploy:
-- goxc -d . -bc="darwin,windows,linux"
+before_deploy:
+- VERSION="${TRAVIS_TAG#v}"
+- goxc -d . -bc="darwin,windows,linux" -pv=$VERSION -max-processors=2
 deploy:
   provider: releases
   api_key:
     secure: I/aHVtMg642E2JUBqRNixvr4pVSXtjwuZbgnjTGZsvH2l3QWMrgq/XJZzUv8g862cmWEO8rDlVp/tNfmoaGcokd7xHUpu3NOB8+ChfOyPqnr3LFrgErWGz6ZteRl65q/aA5qSlikMKdqrg3B8tkwRQ1Grxa31ia0lIeAQi0G/AZaY5P3THFCnIL+xae/AHamIV+P5yeJk7EAAXS/4YdvRkXs9euq+vW+LFxZCFqVSlupdcthK4pJP8YMmDx8UvDosLH8H70qKCjf21NLSbO/Sy0qxf0sRDws3Ufpuu8VVEbHwzfwxJ+bkKgQQTuOKnXTNYzKOCTUOxBbJC65LMVLDZAPpf+uCE8Ut1sw/K5cJiI1aDmnrJrC/vHvr77YHG1sWjJcfUFLZi8QAPLsK+4bQo0zi/Bb+RZMwE/9d1PGBeSYDa9Dm3JXHJgz2DaJEasdvXUjebd7ktjDcYXGvCjnBj25NSw7fMZgI9OFE5u96epEqQr9c1ZzuFIfYk0gmaE9cCpCrUUPkD6TrKPor2eccC6M/8rC4i2sRVtK2mqamNWk3Amg0/lZfFwIBhaC3an3C727TIq4icub5ZYEGTxfE783ghN8ZB32vMufrRY3f+YTmwf+7T9JU7HqynXFYZo5EtqLFjit2igRo6XLaiuMhrcF3Z7WjZ5nsHWuf8UhwVo=
   file:
-    - snapshot/mgomgo_darwin_386.zip
-    - snapshot/mgomgo_darwin_amd64.zip
-    - snapshot/mgomgo_windows_386.zip
-    - snapshot/mgomgo_windows_amd64.zip
-    - snapshot/mgomgo_linux_arm.tar.gz
-    - snapshot/mgomgo_linux_386.tar.gz
-    - snapshot/mgomgo_linux_amd64.tar.gz
-    - snapshot/mgomgo_snapshot_armhf.deb
-    - snapshot/mgomgo_snapshot_i386.deb
-    - snapshot/mgomgo_snapshot_amd64.deb
+    - $VERSION/mgomgo_$VERSION_amd64.deb
+    - $VERSION/mgomgo_$VERSION_armhf.deb
+    - $VERSION/mgomgo_$VERSION_darwin_386.zip
+    - $VERSION/mgomgo_$VERSION_darwin_amd64.zip
+    - $VERSION/mgomgo_$VERSION_i386.deb
+    - $VERSION/mgomgo_$VERSION_linux_386.tar.gz
+    - $VERSION/mgomgo_$VERSION_linux_amd64.tar.gz
+    - $VERSION/mgomgo_$VERSION_linux_arm.tar.gz
+    - $VERSION/mgomgo_$VERSION_windows_386.zip
+    - $VERSION/mgomgo_$VERSION_windows_amd64.zip
   skip_cleanup: true
   on:
     repo: furushchev/mgomgo
