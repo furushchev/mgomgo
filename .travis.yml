@@ -3,11 +3,10 @@ go:
 - 1.7
 env:
 - PATH=/home/travis/gopath/bin:$PATH
-install:
-- go get github.com/laher/goxc
 script:
 - go test -v
-deploy:
+before_deploy:
+- go get github.com/laher/goxc
 - goxc -d . -bc="darwin,windows,linux"
 deploy:
   provider: releases
