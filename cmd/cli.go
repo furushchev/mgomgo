@@ -24,7 +24,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = filepath.Base(os.Args[0])
 	app.Usage = "migrate inter mongo database"
-	app.Version = "1.0.0"
+	app.Version = "1.0.1"
 	app.Author = "Yuki Furuta"
 	app.Email = "furushchev@jsk.imi.i.u-tokyo.ac.jp"
 
