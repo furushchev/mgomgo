@@ -59,7 +59,7 @@ func Migrate(from, to string, conn int, timeout time.Duration) error {
 		return err
 	}
 
-	logrus.Infof("connect to: %s\n", fromParams.Host)
+	logrus.Infof("connect as source to: %s\n", fromParams.Host)
 	fromSession, err := mgo.DialWithTimeout(fromParams.Host, timeout)
 	if err != nil {
 		return err
@@ -67,7 +67,7 @@ func Migrate(from, to string, conn int, timeout time.Duration) error {
 	defer fromSession.Clone()
 	fromSession.SetMode(mgo.Monotonic, true)
 
-	logrus.Infof("connect to: %s\n", toParams.Host)
+	logrus.Infof("connect as destination to: %s\n", toParams.Host)
 	toSession, err := mgo.DialWithTimeout(toParams.Host, timeout)
 	if err != nil {
 		return err
@@ -81,13 +81,8 @@ func Migrate(from, to string, conn int, timeout time.Duration) error {
 			return err
 		}
 	}
-	cols, err := fromDB.CollectionNames()
-	logrus.Infof("Available collections:\n")
-	for i := 0; i < len(cols); i++ {
-		logrus.Infof("%d: %s\n", i, cols[i])
-	}
 	fromC := fromDB.C(fromParams.Collection)
-	logrus.Infof("connected to %s.%s\n", fromC.Database.Name, fromC.Name)
+	logrus.Infof("connected source to %s.%s\n", fromC.Database.Name, fromC.Name)
 
 	logrus.Infof("generating %d routines...", conn)
 	iter := fromC.Find(bson.M{}).Iter()
@@ -95,17 +90,17 @@ func Migrate(from, to string, conn int, timeout time.Duration) error {
 	infochan := make(chan string, conn)
 	errchan := make(chan error, conn)
 	for i := 0; i < conn; i++ {
-		go func(rnum int, s *mgo.Session) {
+		go func(rnum int, s *mgo.Session, p *DBParams) {
 			copySession := s.Copy()
 			defer copySession.Close()
 			copySession.SetMode(mgo.Monotonic, true)
-			toDB := copySession.DB(toParams.Database)
+			toDB := copySession.DB(p.Database)
 			if toParams.UserName != "" {
-				if err := toDB.Login(toParams.UserName, toParams.Password); err != nil {
+				if err := toDB.Login(p.UserName, p.Password); err != nil {
 					errchan <- err
 				}
 			}
-			c := toDB.C(toParams.Collection)
+			c := toDB.C(p.Collection)
 			logrus.Infof("%d: connected to %s.%s\n", rnum, c.Database.Name, c.Name)
 			for {
 				rdata, ok := <- datachan
@@ -127,7 +122,7 @@ func Migrate(from, to string, conn int, timeout time.Duration) error {
 					}
 				}
 			}
-		}(i, fromSession)
+		}(i, toSession, toParams)
 	}
 
 	go func() {
