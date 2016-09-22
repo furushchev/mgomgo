@@ -1,4 +1,4 @@
-# mgomgo
+# mgomgo [![Build Status](https://travis-ci.org/furushchev/mgomgo.svg)](https://travis-ci.org/furushchev/mgomgo)
 
 database migration tool for mongodb
 
