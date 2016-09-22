@@ -105,7 +105,7 @@ func Migrate(from, to string, conn int, timeout time.Duration) error {
 			for {
 				rdata, ok := <- datachan
 				if ok {
-					if err := c.Insert(rdata); err != nil && !mgo.IsDup(err) {
+					if err := c.Insert(rdata); err != nil {
 						if mgo.IsDup(err) {
 							if oid, ok := rdata["_id"].(bson.ObjectId); ok {
 								infochan <- fmt.Sprintf("%d: skipped %s", rnum, oid.Hex())
