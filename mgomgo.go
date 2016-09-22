@@ -47,48 +47,7 @@ func NewDBParamsFromURI(uri string) (*DBParams, error) {
 		Password:   password,
 	}, nil
 }
-/*
-func query(w *sync.WaitGroup, it *mgo.Iter, s *mgo.Session, p *DBParams, idch chan string, errch chan error) {
-	var err error
-	defer w.Done()
 
-	dst := s.Copy()
-	defer dst.Close()
-	db := dst.DB(p.Database)
-	if p.UserName != "" {
-		logrus.Infof("logging in as %s\n", p.UserName)
-		if err = db.Login(p.UserName, p.Password); err != nil {
-			errch <- err
-			return
-		}
-	}
-	col := db.C(p.Collection)
-	logrus.Infof("connected to %s.%s", col.Database.Name, col.Name)
-
-	var data bson.M
-	for {
-		if ok := it.Next(&data); ok != false {
-			logrus.Warnf("no next data\n")
-			break
-		}
-		if err = col.Insert(data); err != nil {
-			logrus.Errorf("failed to insert data\n")
-			errch <- err
-			return
-		} else {
-			if oid, ok := data["_id"].(string); ok {
-				idch <- oid
-			} else {
-				errch <- fmt.Errorf("Cannot convert _id to string")
-				return
-			}
-		}
-	}
-	if err != mgo.ErrNotFound {
-		errch <- err
-		return
-	}
-}*/
 
 func Migrate(from, to string, conn int, timeout time.Duration) error {
 	fromParams, err := NewDBParamsFromURI(from)
