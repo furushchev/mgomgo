@@ -6,6 +6,8 @@ env:
 install:
 - go get github.com/laher/goxc
 script:
+- go test -v
+deploy:
 - goxc -d . -bc="darwin,windows,linux"
 deploy:
   provider: releases
