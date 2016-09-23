@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"io"
 )
 
 type DBParams struct {
@@ -110,6 +111,10 @@ func Migrate(from, to string, conn int, timeout time.Duration) error {
 							if oid, ok := rdata["_id"].(bson.ObjectId); ok {
 								infochan <- fmt.Sprintf("%d: skipped %s", rnum, oid.Hex())
 							}
+							continue
+						}
+						if err == io.EOF {
+							copySession.Refresh()
 							continue
 						}
 						errchan <- err
