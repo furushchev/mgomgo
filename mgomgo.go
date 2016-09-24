@@ -118,6 +118,7 @@ func Migrate(from, to string, conn int, timeout time.Duration) error {
 							continue
 						}
 						errchan <- err
+						return
 					} else {
 						if oid, ok := rdata["_id"].(bson.ObjectId); ok {
 							infochan <- fmt.Sprintf("%d: migrated %s", rnum, oid.Hex())
@@ -136,7 +137,7 @@ func Migrate(from, to string, conn int, timeout time.Duration) error {
 			case info := <- infochan:
 				logrus.Infoln(info)
 			case err := <- errchan:
-				logrus.Fatalln(err)
+				logrus.Errorln(err)
 			}
 		}
 	}()
