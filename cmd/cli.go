@@ -6,6 +6,7 @@ import (
 	"gopkg.in/urfave/cli.v1"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 )
 
@@ -21,6 +22,9 @@ func ActionMigrate(c *cli.Context) {
 }
 
 func main() {
+	cpus := runtime.NumCPU()
+	runtime.GOMAXPROCS(cpus)
+
 	app := cli.NewApp()
 	app.Name = filepath.Base(os.Args[0])
 	app.Usage = "migrate inter mongo database"
