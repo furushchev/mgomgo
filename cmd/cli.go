@@ -25,6 +25,12 @@ func main() {
 	cpus := runtime.NumCPU()
 	runtime.GOMAXPROCS(cpus)
 
+	// logging
+	formatter := new(logrus.TextFormatter)
+	formatter.TimestampFormat = "2006-01-02 15:04:05"
+	formatter.FullTimestamp = true
+	logrus.SetFormatter(formatter)
+
 	app := cli.NewApp()
 	app.Name = filepath.Base(os.Args[0])
 	app.Usage = "migrate inter mongo database"
