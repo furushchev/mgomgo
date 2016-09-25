@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"time"
+	"net/http"
+	_ "net/http/pprof"
 )
 
 func ActionMigrate(c *cli.Context) {
@@ -24,6 +26,11 @@ func ActionMigrate(c *cli.Context) {
 func main() {
 	cpus := runtime.NumCPU()
 	runtime.GOMAXPROCS(cpus)
+
+	// profiling
+	go func() {
+		logrus.Infoln(http.ListenAndServe("localhost:4000", nil))
+	}()
 
 	// logging
 	formatter := new(logrus.TextFormatter)
